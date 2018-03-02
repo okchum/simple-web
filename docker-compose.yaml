@@ -1,0 +1,41 @@
+version: "2"
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:mainline-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx_config:/etc/nginx/conf.d
+      - ./www:/www/
+    depends_on:
+      - php
+    restart : always
+
+  php:
+    container_name: php
+    build:
+      context: .
+      dockerfile: ./services/php.dockerfile
+#    image: php:7-fpm-alpine
+    volumes:
+      - ./www:/www/
+    depends_on:
+      - mysql
+    restart: always
+
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=123456
+      - MYSQL_DATABASE=website
+      - MYSQL_ROOT_PASSWORD=123456
+    volumes:
+      - ./database/mysql-data:/var/lib/mysql
+      - ./database/mysql-initdb:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    restart: always
