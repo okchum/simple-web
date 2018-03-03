@@ -6,7 +6,7 @@ A simple web development environment. Please take your risks if you are running 
 
 The only thing you need to do is installing `Docker` and `Docker-compose`.
 
-1. Put the files of your website on `./www/public`.
+1. Put the files of your website or run `mkdir -p www/public && echo '<?php phpinfo();' > www/public/index.php` on `./www/public`.
 
 2. Run this command `docker-compose up -d` on your terminal.
 
