@@ -24,7 +24,7 @@ docker-compose up -d
 
 ## Nginx Configuration
 
-The file `./nginx_config/site.conf` is a minimal site environment for PHP. Modify this file please if you have specific requires.
+The file `./nginx-config/site.conf` is a minimal site environment for PHP. Modify this file please if you have specific requires.
 
 ## Services
 
