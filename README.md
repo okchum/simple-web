@@ -9,7 +9,7 @@ The only thing you need to do is installing `Docker` and `Docker-compose`.
 1. Put the files of your website or run the command below on `./www/public`.
 
 ```
-mkdir -p www/public && echo '<?php phpinfo();' > www/public/index.php
+cp site.conf.sample nginx-config/site.conf && mkdir -p www/public && echo '<?php phpinfo();' > www/public/index.php
 ```
 
 2. Run the command on your terminal.
