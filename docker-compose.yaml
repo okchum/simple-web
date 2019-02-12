@@ -7,7 +7,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx-config:/etc/nginx/conf.d
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/nginx/vhost:/etc/nginx/conf.d
       - ./www:/www/
     depends_on:
       - php
@@ -15,11 +16,12 @@ services:
 
   php:
     container_name: php
+    # image: php:7-fpm-alpine
     build:
       context: .
       dockerfile: ./services/php.dockerfile
-#    image: php:7-fpm-alpine
     volumes:
+      - ./config/php/php.ini:/usr/local/etc/php/php.ini
       - ./www:/www/
     depends_on:
       - mysql
@@ -34,6 +36,7 @@ services:
       - MYSQL_DATABASE=website
       - MYSQL_ROOT_PASSWORD=123456
     volumes:
+      - ./config/mysql:/etc/mysql
       - ./database/mysql-data:/var/lib/mysql
       - ./database/mysql-initdb:/docker-entrypoint-initdb.d
     ports:
