@@ -21,14 +21,14 @@ services:
       dockerfile: ./services/php.dockerfile
     volumes:
       - ./config/php/php.ini:/usr/local/etc/php/php.ini
-      - ./www:/www/
+      - ./www:/www/:cached
     depends_on:
       - mysql
     restart: always
 
   mysql:
     container_name: mysql
-    image: mysql:5
+    image: mysql:5.7
     environment:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=123456
@@ -40,36 +40,6 @@ services:
       - ./database/mysql-initdb:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
-    restart: always
-
-  ssweb5:
-    container_name: ssweb5
-    image: brettt89/silverstripe-web:5.6
-    working_dir: /var/www/html
-    depends_on:
-      - mysql
-    ports:
-      - 85:80
-      - 445:443
-    volumes:
-      - ./www:/var/www/html
-      - ./config/apache:/etc/apache2/sites-available
-      - ./config/apache:/etc/apache2/sites-enabled
-    restart: always
-
-  ssweb7:
-    container_name: ssweb7
-    image: brettt89/silverstripe-web:7.3
-    working_dir: /var/www/html
-    depends_on:
-      - mysql
-    ports:
-      - 88:80
-      - 444:443
-    volumes:
-      - ./www:/var/www/html
-      - ./config/apache:/etc/apache2/sites-available
-      - ./config/apache:/etc/apache2/sites-enabled
     restart: always
 
   redis_server:
