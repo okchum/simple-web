@@ -21,7 +21,7 @@ services:
       dockerfile: ./services/php.dockerfile
     volumes:
       - ./config/php/php.ini:/usr/local/etc/php/php.ini
-      - ./www:/www/:cached
+      - ./www:/www/:delegated
     depends_on:
       - mysql
     restart: always
