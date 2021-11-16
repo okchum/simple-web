@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 services:
   nginx:
     container_name: nginx
@@ -7,37 +7,72 @@ services:
       - "80:80"
       - "443:443"
     volumes:
+      - ./certs:/certs
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx/self-signed.conf:/etc/nginx/self-signed.conf
+      - ./config/nginx/ssl-params.conf:/etc/nginx/ssl-params.conf
       - ./config/nginx/vhost:/etc/nginx/conf.d
-      - ./www:/www/
-    depends_on:
-      - php
+      - ./www:/www:delegated
     restart : always
 
-  php:
-    container_name: php
+
+  php74:
+    container_name: php74
     build:
       context: .
-      dockerfile: ./services/php.dockerfile
+      dockerfile: ./services/php74.dockerfile
     volumes:
-      - ./config/php/php.ini:/usr/local/etc/php/php.ini
-      - ./www:/www/:delegated
+      - ./config/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./config/php/php7.ini:/etc/php7/php.ini
+      - ./config/php/php-fpm.conf:/etc/php7/php-fpm.conf
+      - ./www:/www:delegated
     depends_on:
       - mysql
     restart: always
 
+
+  php71:
+    container_name: php71
+    #image: php:7.1.33-fpm-alpine
+    build:
+      context: .
+      dockerfile: ./services/php71.dockerfile
+    volumes:
+      - ./config/php7:/usr/local/etc/php7
+      - ./www:/www:delegated
+    depends_on:
+      - mysql
+#      - mysql8
+    restart: always
+
+
+#  mysql8:
+#    container_name: mysql8
+#    image: mysql:8.0.20
+#    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=123456
+#      - MYSQL_DATABASE=test
+#      - MYSQL_ROOT_PASSWORD=123456
+#    volumes:
+#      - ./config/mysql8:/etc/mysql
+#      - ./database/mysql8:/var/lib/mysql
+#      #- ./database/mysql-initdb:/docker-entrypoint-initdb.d
+#    ports:
+#      - "3308:3306"
+#    restart: always
+
   mysql:
     container_name: mysql
-    image: mysql:8.0.20
+    image: mysql:5.7
     environment:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=123456
-      - MYSQL_DATABASE=website
+      - MYSQL_DATABASE=test
       - MYSQL_ROOT_PASSWORD=123456
     volumes:
-      - ./config/mysql:/etc/mysql
-      - ./database/mysql-data:/var/lib/mysql
-      - ./database/mysql-initdb:/docker-entrypoint-initdb.d
+      - ./config/mysql5:/etc/mysql
+      - ./database/mysql5:/var/lib/mysql
     ports:
       - "3306:3306"
     restart: always
@@ -48,7 +83,7 @@ services:
     ports:
      - "6379:6379"
     volumes:
-      - ./config/redis/redis.conf:/usr/local/etc/redis/redis.conf
       - ./database/redis-data:/var/lib/redis
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
      - REDIS_REPLICATION_MODE=master
