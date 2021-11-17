@@ -6,11 +6,11 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      - PHP_CONTAINER=php74
     volumes:
       - ./certs:/certs
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./config/nginx/self-signed.conf:/etc/nginx/self-signed.conf
-      - ./config/nginx/ssl-params.conf:/etc/nginx/ssl-params.conf
       - ./config/nginx/vhost:/etc/nginx/conf.d
       - ./www:/www:delegated
     restart : always
@@ -20,8 +20,9 @@ services:
     container_name: php74
     build:
       context: .
-      dockerfile: ./services/php74.dockerfile
+      dockerfile: ./services/php/php74.dockerfile
     volumes:
+      - ./profile:/root
       - ./config/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./config/php/php7.ini:/etc/php7/php.ini
       - ./config/php/php-fpm.conf:/etc/php7/php-fpm.conf
@@ -36,10 +37,11 @@ services:
     #image: php:7.1.33-fpm-alpine
     build:
       context: .
-      dockerfile: ./services/php71.dockerfile
+      dockerfile: ./services/php/php71.dockerfile
     volumes:
       - ./config/php7:/usr/local/etc/php7
       - ./www:/www:delegated
+      - ./profile:/root
     depends_on:
       - mysql
 #      - mysql8
@@ -66,8 +68,6 @@ services:
     container_name: mysql
     image: mysql:5.7
     environment:
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=123456
       - MYSQL_DATABASE=test
       - MYSQL_ROOT_PASSWORD=123456
     volumes:
